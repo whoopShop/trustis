@@ -1,3 +1,10 @@
+// User accounts
+Accounts.ui.config({
+    passwordSignupFields: "USERNAME_ONLY"
+});
+
+
+
 
 // These helpers will be available in all templates
 Template.registerHelper('getAllPeople', function () {
@@ -51,6 +58,29 @@ Template.allPeopleTable.events({
     }
 });
 
-Template.admin.helpers({
+Template.rating.helpers({
+    avgPoints:function(){
+        return this.totalpoints / this.totalvoters;
+    }
+});
+
+Template.rating.events({
+    "submit .add-points":function(event){
+        var points= event.target.points.value;
+        // console.log(points);
+        // console.log(this);
+        event.preventDefault();
+        // Check if I have already voted on this one
+        // If not, increment the totalvotes
+        
+        // Meteor.call("userIncVoters", this._id);
+        Meteor.call("userCreatesVote", this._id, points);
+        // Meteor.call("userAddPoints", this._id);
+    },
+    "click .removePoint":function(){
+        // Check if I have already voted on this one
+        // If not, I should not be able to remove points - not needed with radio buttons
+        Meteor.call("userRemovePoints", this._id);
+    }
     
-})
+});

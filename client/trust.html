@@ -5,6 +5,7 @@
 <template name="mybody">
     <div class="container">
         <p>Here we can put our navbar</p>
+        {{> loginButtons}}
         <a href="/">Home</a>
         <a href="/admin">Admin</a>
         
@@ -35,15 +36,18 @@
 
 <template name="rating">
     <!--  TODO find a simple way to rate something from 0-10 with a Single click -->
-    <label class="radio-inline">
-      <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"> 1
-    </label>
-    <label class="radio-inline">
-      <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2"> 2
-    </label>
-    <label class="radio-inline">
-      <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> 3
-    </label>
+    Avg: {{avgPoints}}<br>
+    Points: {{totalpoints}}<br>
+    Voters: {{totalvoters}}<br>
+    {{#if currentUser}}
+        Your Score: {{myscore}} / 10<br>
+        <form class="add-points" >
+            <input type="text" name="points" value="">
+            <button>Add</button> 
+        </form>
+    {{else}}
+        <p>Sign in to vote.</p>
+    {{/if}}
 </template>
 
 <template name="admin">
@@ -61,7 +65,7 @@
 <template name="addPeople"> 
     <div class="col-md-4">
         <h3>Add a new person</h3>
-        <form class="add-people" action="index.html" method="post">
+        <form class="add-people" method="post">
             <div class="form-group">
                 <label for="name">Name</label>
                 <input class="form-control" type="text" name="name" placeholder="Name">

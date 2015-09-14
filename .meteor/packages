@@ -8,3 +8,5 @@ meteor-platform
 autopublish
 twbs:bootstrap
 iron:router
+accounts-ui
+accounts-password
