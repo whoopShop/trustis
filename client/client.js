@@ -66,16 +66,36 @@ Template.rating.helpers({
 
 Template.rating.events({
     "submit .add-points":function(event){
-        var points= event.target.points.value;
-        // console.log(points);
+        var points = event.target.points.value;
+        // console.log("Points: " + points);
         // console.log(this);
         event.preventDefault();
-        // Check if I have already voted on this one
+        
+        
+        // Step 1, see what (and if) user voted last
         // If not, increment the totalvotes
         
-        // Meteor.call("userIncVoters", this._id);
+        if (Votersdb.findOne({peopleId:this._id}) === undefined) {
+            // If user has not voted this person before, increment the totalvoters
+            Meteor.call("userIncVoters", this._id);
+            var lastVote = 0;
+        }else {
+            var lastVote = Votersdb.findOne({peopleId:this._id}).points;
+        }
+        // console.log("Last Vote: " + lastVote);
+        
+        // If user votes 7, after having voted 4 yesterday (or whenever)
+        // We need to remove 4 from the totalpoints, and add 7
+        // ... or just add the difference
+        var difference = points - lastVote;
+        
+        // Save this users vote on this person
         Meteor.call("userCreatesVote", this._id, points);
-        // Meteor.call("userAddPoints", this._id);
+        
+        // Update the totalpoints voting
+        Meteor.call("userAddPoints", this._id, difference);
+        
+        
     },
     "click .removePoint":function(){
         // Check if I have already voted on this one

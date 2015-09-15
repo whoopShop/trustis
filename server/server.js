@@ -45,10 +45,10 @@ Meteor.methods({
         Peopledb.remove(thisId);
     },
     
-    userAddPoints:function(thisId){
+    userAddPoints:function(thisId, points){
         // TODO check if logged in
         
-        Peopledb.update(thisId, {$inc:{totalpoints:1}});
+        Peopledb.update(thisId, {$inc:{totalpoints:points}});
     },
     userRemovePoints:function(thisId){
         // TODO check if logged in
