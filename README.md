@@ -1,6 +1,8 @@
 # trustis
 Simple trust measurement tool
 
+Try it live here http://trustis.meteor.com
+
 
 Simple survey site about how much we trust for example politicans
 
