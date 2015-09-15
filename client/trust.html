@@ -42,8 +42,9 @@
     {{#if currentUser}}
         Your Score: {{myscore}} / 10<br>
         <form class="add-points" >
-            <input type="text" name="points" value="">
-            <button>Add</button> 
+            <input class="range-slider" type="range" min="0" max="10" name="points" value="5">
+            <span class="range-number">5</span><br>
+            <button class="btn btn-sm btn-primary mb10">Submit</button> 
         </form>
     {{else}}
         <p>Sign in to vote.</p>

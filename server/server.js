@@ -3,9 +3,9 @@ Meteor.startup(function () {
     // code to run on server at startup
     
     if (Peopledb.find().count() == 0) {
-        Peopledb.insert({name:'Katrín', totalpoints:32, totalvoters:9, profilepic:'http://www.althingi.is/myndir/thingmenn-cache/690/690-220.jpg', createdAt: new Date(), party:'Vinstri Græn' });
-        Peopledb.insert({name:'Simmi', totalpoints:31, totalvoters:8, profilepic:'http://www.althingi.is/myndir/thingmenn-cache/729/729-220.jpg', createdAt: new Date(), party:'Framsóknarflokkur' });
-        Peopledb.insert({name:'Bjarni', totalpoints:30, totalvoters:7, profilepic:'http://www.althingi.is/myndir/thingmenn-cache/652/652-220.jpg', createdAt: new Date(), party:'Sjálfstæðisflokkur' });
+        Peopledb.insert({name:'Katrín', totalpoints:0, totalvoters:0, profilepic:'http://www.althingi.is/myndir/thingmenn-cache/690/690-220.jpg', createdAt: new Date(), party:'Vinstri Græn' });
+        Peopledb.insert({name:'Simmi', totalpoints:0, totalvoters:0, profilepic:'http://www.althingi.is/myndir/thingmenn-cache/729/729-220.jpg', createdAt: new Date(), party:'Framsóknarflokkur' });
+        Peopledb.insert({name:'Bjarni', totalpoints:0, totalvoters:0, profilepic:'http://www.althingi.is/myndir/thingmenn-cache/652/652-220.jpg', createdAt: new Date(), party:'Sjálfstæðisflokkur' });
     }
 });
 
@@ -45,14 +45,10 @@ Meteor.methods({
         Peopledb.remove(thisId);
     },
     
-    userAddPoints:function(thisId, points){
+    userAddPoints:function(thisId, diff){
         // TODO check if logged in
         
-        Peopledb.update(thisId, {$inc:{totalpoints:points}});
-    },
-    userRemovePoints:function(thisId){
-        // TODO check if logged in
-        Peopledb.update(thisId, {$inc:{totalpoints:-1}});
+        Peopledb.update(thisId, {$inc:{totalpoints:diff}});
     },
     userIncVoters:function(thisId){
         Peopledb.update(thisId, {$inc:{totalvoters:1}});

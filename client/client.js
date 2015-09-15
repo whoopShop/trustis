@@ -4,8 +4,6 @@ Accounts.ui.config({
 });
 
 
-
-
 // These helpers will be available in all templates
 Template.registerHelper('getAllPeople', function () {
         return Peopledb.find({});
@@ -71,7 +69,6 @@ Template.rating.events({
         // console.log(this);
         event.preventDefault();
         
-        
         // Step 1, see what (and if) user voted last
         // If not, increment the totalvotes
         
@@ -82,7 +79,6 @@ Template.rating.events({
         }else {
             var lastVote = Votersdb.findOne({peopleId:this._id}).points;
         }
-        // console.log("Last Vote: " + lastVote);
         
         // If user votes 7, after having voted 4 yesterday (or whenever)
         // We need to remove 4 from the totalpoints, and add 7
@@ -95,12 +91,10 @@ Template.rating.events({
         // Update the totalpoints voting
         Meteor.call("userAddPoints", this._id, difference);
         
-        
     },
-    "click .removePoint":function(){
-        // Check if I have already voted on this one
-        // If not, I should not be able to remove points - not needed with radio buttons
-        Meteor.call("userRemovePoints", this._id);
+    "click .range-slider":function(event){
+        var points = event.target.value;
+        event.target.nextElementSibling.innerText = points;
     }
     
 });
