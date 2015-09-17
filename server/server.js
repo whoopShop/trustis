@@ -53,12 +53,22 @@ Meteor.methods({
     userIncVoters:function(thisId){
         Peopledb.update(thisId, {$inc:{totalvoters:1}});
     },
-    
-    userCreatesVote:function(thisId, points){
+    userCreatesVote:function(votee,thisId, points){
+        Votersdb.insert({
+            userVoter:votee,
+            peopleId:thisId,
+            points:points
+        });
+    },
+    userUpdatesVote:function(votee,thisId, points){
         // How many points has a user given a person
         Votersdb.update(
-            {peopleId:thisId},
             {
+                peopleId:thisId,
+                userVoter:votee
+            },
+            {
+                userVoter:votee,
                 peopleId:thisId,
                 points:points
             },

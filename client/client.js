@@ -66,27 +66,49 @@ Template.rating.events({
     "submit .add-points":function(event){
         var points = event.target.points.value;
         // console.log("Points: " + points);
+        if (points === undefined) {
+            points = 5;
+        }
+        // TODO: make sure points is a number 0-10
+        // console.log("Points: " + points);
         // console.log(this);
         event.preventDefault();
         
-        // Step 1, see what (and if) user voted last
-        // If not, increment the totalvotes
         
-        if (Votersdb.findOne({peopleId:this._id}) === undefined) {
-            // If user has not voted this person before, increment the totalvoters
+        var lastVote = 0;
+        var thisVoter = Votersdb.find({userVoter:Meteor.userId()});
+        console.log('userid has nr of votes: ' + Votersdb.find({userVoter:Meteor.userId()}).count());
+        
+        // Step 1, see if user has ever voted.
+        if (thisVoter.count() === 0 ) {
+            // Creates a brand new vote and increments counter
+            console.log("Never voted before");
+            Meteor.call("userCreatesVote", Meteor.userId(), this._id, points);
             Meteor.call("userIncVoters", this._id);
-            var lastVote = 0;
-        }else {
-            var lastVote = Votersdb.findOne({peopleId:this._id}).points;
+            
+        }else{
+            // We know that this user has voted something before
+            // Step 2, see if user has voted this person before
+            if (Votersdb.find({userVoter:Meteor.userId(), peopleId:this._id }).count === 0) {
+                console.log("Never voted this one before");
+                Meteor.call("userUpdatesVote", Meteor.userId(), this._id, points);
+                // Increment voters
+                Meteor.call("userIncVoters", this._id);
+            }else{
+                console.log("Voted this one before, only update points");
+                Meteor.call("userUpdatesVote", Meteor.userId(), this._id, points);
+                // Get old points
+                var lastVote = Votersdb.findOne({userVoter:Meteor.userId(), peopleId:this._id}).points;
+
+            }
+            
         }
         
         // If user votes 7, after having voted 4 yesterday (or whenever)
         // We need to remove 4 from the totalpoints, and add 7
         // ... or just add the difference
         var difference = points - lastVote;
-        
-        // Save this users vote on this person
-        Meteor.call("userCreatesVote", this._id, points);
+        console.log("Points: " + points + '  Diff: ' + difference + ' lastVote: ' + lastVote);
         
         // Update the totalpoints voting
         Meteor.call("userAddPoints", this._id, difference);
