@@ -1,6 +1,8 @@
 
 Meteor.startup(function () {
     // code to run on server at startup
+
+    // If the number of thingmenn in the DB is less than in the thingmenn object, loop through them and import into db
     if (Peopledb.find().count() < thingmenn.length) {
         for (var i = thingmenn.length - 1; i >= 0; i--) {
             Peopledb.insert({
