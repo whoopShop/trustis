@@ -15,7 +15,7 @@ Router.route('/admin');
 Router.route('/admin/edit/:_id',{
     name:'editPeople',
     data:function(){
-        var thisId = Peopledb.findOne({_id:new Mongo.Collection.ObjectID(this.params._id)});
+        var thisId = Peopledb.findOne({_id:this.params._id});
         return thisId;
     }
 })

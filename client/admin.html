@@ -1,0 +1,85 @@
+<template name="admin">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Hi admin</h1>
+        </div>
+        
+        {{> addPeople}}
+        {{> allPeopleTable}}
+    </div>
+    
+</template>
+
+<template name="addPeople"> 
+    <div class="col-md-4">
+        <h3>Add a new person</h3>
+        <form class="add-people" method="post">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input class="form-control" type="text" name="name" placeholder="Name">
+            </div>
+            <div class="form-group">
+                <label for="party">Party</label>
+                <input class="form-control" type="text" name="party" placeholder="Party">
+            </div>
+            <div class="form-group">
+                <label for="profilepic">Profile picture</label>
+                <input class="form-control" type="text" name="profilepic" placeholder="Picture URL">
+            </div>
+            <button type="submit" class="btn btn-primary" name="button">Add</button>
+        </form>
+    </div>
+</template>
+
+<template name="allPeopleTable">
+    <div class="col-md-12">
+        <h3>See all</h3>
+        <table class="table table-bordered table-condensed">
+            <thead>
+                <tr>
+                    <th>Edit</th>
+                    <th>Name</th>
+                    <th>Party</th>
+                    <th>Votes</th>
+                    <th>Points</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each getAllPeople }}
+                <tr>
+                    <td>
+                        <a href="/admin/edit/{{_id}}">Edit</a>
+                        <a href="#" class="delete-people">Delete</a>
+                    </td>
+                    <td>{{name}}</td>
+                    <td>{{party}}</td>
+                    <td>{{totalvoters}}</td>
+                    <td>{{totalpoints}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</template>
+
+<template name="editPeople">
+    <h3>Edit</h3>
+    {{_id}}
+    
+    <form class="edit-people" action="index.html" method="post">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input class="form-control" type="text" name="name" value="{{name}}">
+        </div>
+        <div class="form-group">
+            <label for="party">Party</label>
+            <input class="form-control" type="text" name="party" value="{{party}}">
+        </div>
+        <div class="form-group">
+            <label for="profilepic">Profile picture</label>
+            <input class="form-control" type="text" name="profilepic" value={{profilepic}}>
+        </div>
+        <button type="submit" class="btn btn-primary" name="button">Save edit</button>
+    </form>
+    
+</template>
