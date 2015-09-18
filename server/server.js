@@ -1,11 +1,24 @@
 
 Meteor.startup(function () {
     // code to run on server at startup
-    
-    if (Peopledb.find().count() == 0) {
-        Peopledb.insert({name:'Katrín', totalpoints:0, totalvoters:0, profilepic:'http://www.althingi.is/myndir/thingmenn-cache/690/690-220.jpg', createdAt: new Date(), party:'Vinstri Græn' });
-        Peopledb.insert({name:'Simmi', totalpoints:0, totalvoters:0, profilepic:'http://www.althingi.is/myndir/thingmenn-cache/729/729-220.jpg', createdAt: new Date(), party:'Framsóknarflokkur' });
-        Peopledb.insert({name:'Bjarni', totalpoints:0, totalvoters:0, profilepic:'http://www.althingi.is/myndir/thingmenn-cache/652/652-220.jpg', createdAt: new Date(), party:'Sjálfstæðisflokkur' });
+    if (Peopledb.find().count() < thingmenn.length) {
+        for (var i = thingmenn.length - 1; i >= 0; i--) {
+            Peopledb.insert({
+                name: thingmenn[i].name,
+                totalpoints: 0,
+                totalvoters: 0,
+                profilepic: thingmenn[i].image_url,
+                althing_url: thingmenn[i].althing_url, 
+                district: thingmenn[i].district, 
+                email: thingmenn[i].email, 
+                facebook: thingmenn[i].facebook, 
+                office: thingmenn[i].office, 
+                party: thingmenn[i].party, 
+                phone: thingmenn[i].phone, 
+                sites: thingmenn[i].sites, 
+                twitter: thingmenn[i].twitter
+            });
+        };
     }
 });
 
