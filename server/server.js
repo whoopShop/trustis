@@ -2,6 +2,7 @@
 Meteor.startup(function () {
     // code to run on server at startup
     if (Peopledb.find().count() < thingmenn.length) {
+        
         for (var i = thingmenn.length - 1; i >= 0; i--) {
             Peopledb.insert({
                 name: thingmenn[i].name,
@@ -20,6 +21,17 @@ Meteor.startup(function () {
             });
         };
     }
+});
+
+// Publish
+Meteor.publish("Peoplepub", function(){
+    // Everyone can read this
+    return Peopledb.find();
+});
+
+Meteor.publish("Voterspub", function(){
+    // Only a logged in user can see and only see his own votes
+    return Votersdb.find({userVoter:this.userId});
 });
 
 

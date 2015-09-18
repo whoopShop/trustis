@@ -3,6 +3,11 @@ Accounts.ui.config({
     passwordSignupFields: "USERNAME_ONLY"
 });
 
+// Subscription
+
+Meteor.subscribe("Peoplepub");
+Meteor.subscribe("Voterspub");
+
 
 // These helpers will be available in all templates
 Template.registerHelper('getAllPeople', function () {
