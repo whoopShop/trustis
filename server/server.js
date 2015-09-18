@@ -24,6 +24,17 @@ Meteor.startup(function () {
     }
 });
 
+// Publish
+Meteor.publish("Peoplepub", function(){
+    // Everyone can read this
+    return Peopledb.find();
+});
+
+Meteor.publish("Voterspub", function(){
+    // Only a logged in user can see and only see his own votes
+    return Votersdb.find({userVoter:this.userId});
+});
+
 
 Meteor.methods({
     adminAddPeople:function(name, party, profilepic){

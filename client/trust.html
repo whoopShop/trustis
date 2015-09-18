@@ -36,9 +36,8 @@
 
 <template name="rating">
     <!--  TODO find a simple way to rate something from 0-10 with a Single click -->
-    Avg: {{avgPoints}}<br>
-    Points: {{totalpoints}}<br>
-    Voters: {{totalvoters}}<br>
+    Average:   {{avgPoints}}<br>
+    Votes: {{totalvoters}}<br>
     {{#if currentUser}}
         <form class="add-points" >
             <input class="range-slider" type="range" min="0" max="10" name="points" value="5">
