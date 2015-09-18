@@ -92,16 +92,15 @@ Template.rating.events({
             // Step 2, see if user has voted this person before
             if (Votersdb.find({userVoter:Meteor.userId(), peopleId:this._id }).count() === 0) {
                 // console.log("Never voted this one before");
-                Meteor.call("userUpdatesVote", Meteor.userId(), this._id, points);
                 // Increment voters
                 Meteor.call("userIncVoters", this._id);
             }else{
-                // console.log("Voted this one before, only update points");
-                Meteor.call("userUpdatesVote", Meteor.userId(), this._id, points);
-
+                // console.log("Voted this one before, only update points
                 // Get old points
                 var lastVote = Votersdb.findOne({userVoter:Meteor.userId(), peopleId:this._id}).points;
             }
+            // Updates the point in users personal table, not the people table
+            Meteor.call("userUpdatesVote", Meteor.userId(), this._id, points);
             
         }
         
