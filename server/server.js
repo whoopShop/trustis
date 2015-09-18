@@ -2,7 +2,6 @@
 Meteor.startup(function () {
     // code to run on server at startup
     if (Peopledb.find().count() < thingmenn.length) {
-        
         for (var i = thingmenn.length - 1; i >= 0; i--) {
             Peopledb.insert({
                 name: thingmenn[i].name,
