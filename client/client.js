@@ -58,6 +58,9 @@ Template.allPeopleTable.events({
 
 Template.rating.helpers({
     avgPoints:function(){
+        if (this.totalvoters === 0) {
+            return 0;
+        }
         return this.totalpoints / this.totalvoters;
     }
 });
@@ -65,7 +68,6 @@ Template.rating.helpers({
 Template.rating.events({
     "submit .add-points":function(event){
         var points = event.target.points.value;
-        // console.log("Points: " + points);
         if (points === undefined) {
             points = 5;
         }
@@ -77,29 +79,28 @@ Template.rating.events({
         
         var lastVote = 0;
         var thisVoter = Votersdb.find({userVoter:Meteor.userId()});
-        console.log('userid has nr of votes: ' + Votersdb.find({userVoter:Meteor.userId()}).count());
         
         // Step 1, see if user has ever voted.
         if (thisVoter.count() === 0 ) {
             // Creates a brand new vote and increments counter
-            console.log("Never voted before");
+            // console.log("Never voted before");
             Meteor.call("userCreatesVote", Meteor.userId(), this._id, points);
             Meteor.call("userIncVoters", this._id);
             
         }else{
             // We know that this user has voted something before
             // Step 2, see if user has voted this person before
-            if (Votersdb.find({userVoter:Meteor.userId(), peopleId:this._id }).count === 0) {
-                console.log("Never voted this one before");
+            if (Votersdb.find({userVoter:Meteor.userId(), peopleId:this._id }).count() === 0) {
+                // console.log("Never voted this one before");
                 Meteor.call("userUpdatesVote", Meteor.userId(), this._id, points);
                 // Increment voters
                 Meteor.call("userIncVoters", this._id);
             }else{
-                console.log("Voted this one before, only update points");
+                // console.log("Voted this one before, only update points");
                 Meteor.call("userUpdatesVote", Meteor.userId(), this._id, points);
+
                 // Get old points
                 var lastVote = Votersdb.findOne({userVoter:Meteor.userId(), peopleId:this._id}).points;
-
             }
             
         }
@@ -108,7 +109,7 @@ Template.rating.events({
         // We need to remove 4 from the totalpoints, and add 7
         // ... or just add the difference
         var difference = points - lastVote;
-        console.log("Points: " + points + '  Diff: ' + difference + ' lastVote: ' + lastVote);
+        // console.log("Points: " + points + '  Diff: ' + difference + ' lastVote: ' + lastVote);
         
         // Update the totalpoints voting
         Meteor.call("userAddPoints", this._id, difference);
