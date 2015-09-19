@@ -1,11 +1,33 @@
-/* CSS declarations go here */
-.singlePerson{
-    background-color: #eee;
-    margin-top:10px;
-    margin-left:10px;
-    /*outline: 1px dotted;*/
-    border-radius: 15px;
+
+.person-list {
+    padding-left: 0;
 }
-.mb10{
-    margin-bottom:10px;
+
+.person {
+    display: inline-block;
+    float: left;
+    width: 540px;
+    margin: 0 30px 30px 0;
+    padding: 15px;
+    background-color: #fafafa;
+    box-shadow: 0px 1px 3px #ccc;
+
+    &:nth-child(2n) {
+      margin-right: 0;
+    }
+
+    h1 {
+        margin-top: 5px;
+    }
+
+    .party-name {
+        margin-top: 0;
+        text-transform: uppercase;
+        font-size: @font-size-h4;
+        color: #505050;
+    }
+
+    img {
+        float: right;
+    }
 }

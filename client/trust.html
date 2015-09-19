@@ -2,34 +2,47 @@
   <title>trust</title>
 </head>
 
-<template name="mybody">
-    <div class="container">
-        <p>Here we can put our navbar</p>
-        {{> loginButtons}}
-        <a href="/">Home</a>
-        <a href="/admin">Admin</a>
-        
-        <!-- Every template is rendered in the following yield -->
-        {{> yield}}
-        
-    </div>
+<template name="navigation">
+    <nav class="navbar navbar-default navbar-static-top navbar-inverse">
+        <div class="container">
+            <p>Here we can put our navbar</p>
+            {{> loginButtons}}
+            <a href="/">Home</a>
+            <a href="/admin">Admin</a>
+        </div>
+    </nav>    
 </template>
 
-<template name="people">
+<template name="mybody">
+        {{>navigation}}
+        <div class="container">
+            <!-- Every template is rendered in the following yield -->
+            {{> yield}}            
+        </div>
+</template>
+
+<template name="person">
+    <li class="person">
+        <h1>{{name}}</h1>
+        <h2 class="party-name">{{party}}</h2>
+        <img src="{{profilepic}}" height="220" alt="profile pic" class="clearfix" />
+        <br>
+        {{>rating}}
+    </li>    
+</template>
+
+<template name="people">        
     <div class="row">
         <div class="col-md-12">
-            <h3>Rate how much you trust</h3>
+            <h1>How much do you trust...</h1>
+
+            <ul class="person-list">
+                {{#each getAllPeople}}
+                    {{>person}}
+                {{/each}}
+            </ul>
+
         </div>
-        
-        {{#each getAllPeople}}
-            <div class="col-md-3 singlePerson">
-                <h3>{{name}}</h3>
-                <h4>{{party}}</h4>
-                <img src="{{profilepic}}" height="220" alt="profile pic" />
-                <br>
-                {{>rating}}
-            </div>
-        {{/each}}
         
     </div>
 </template>
@@ -42,7 +55,7 @@
         <form class="add-points" >
             <input class="range-slider" type="range" min="0" max="10" name="points" value="5">
             <span class="range-number">5</span><br>
-            <button class="btn btn-sm btn-primary mb10">Submit</button> 
+            <button class="btn btn-sm btn-primary">Submit</button> 
         </form>
     {{else}}
         <p>Sign in to vote.</p>
