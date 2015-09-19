@@ -3,7 +3,7 @@ Meteor.startup(function () {
     // code to run on server at startup
 
     // If the number of thingmenn in the DB is less than in the thingmenn object, loop through them and import into db
-    if (Peopledb.find().count() < thingmenn.length) {
+    if (Peopledb.find().count() == 0) {
         for (var i = thingmenn.length - 1; i >= 0; i--) {
             Peopledb.insert({
                 name: thingmenn[i].name,
@@ -22,6 +22,7 @@ Meteor.startup(function () {
             });
         };
     }
+
 });
 
 // Publish
@@ -35,6 +36,13 @@ Meteor.publish("Voterspub", function(){
     return Votersdb.find({userVoter:this.userId});
 });
 
+Meteor.publish("currentUserData", function() {
+    return Meteor.users.find({}, {
+      fields : {
+        'avatar' : 1
+      }
+    });
+  });
 
 Meteor.methods({
     adminAddPeople:function(name, party, profilepic){

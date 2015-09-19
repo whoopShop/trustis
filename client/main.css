@@ -1,4 +1,7 @@
 /* CSS declarations go here */
+.container {
+  width: 90%;
+}
 .singlePerson{
     background-color: #eee;
     margin-top:10px;
@@ -8,4 +11,8 @@
 }
 .mb10{
     margin-bottom:10px;
+}
+.btn {
+  border-radius: 0;
+  font-size: 0.7em;
 }

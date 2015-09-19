@@ -6,6 +6,13 @@
 
 meteor-platform
 twbs:bootstrap
-iron:router
 accounts-ui
 accounts-password
+react
+meteorhacks:npm
+cosmos:browserify
+
+
+npm-container
+facebook
+google
