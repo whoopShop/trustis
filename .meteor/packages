@@ -16,3 +16,5 @@ cosmos:browserify
 npm-container
 facebook
 google
+accounts-facebook
+service-configuration

@@ -18,7 +18,8 @@ Meteor.startup(function () {
                 party: thingmenn[i].party, 
                 phone: thingmenn[i].phone, 
                 sites: thingmenn[i].sites, 
-                twitter: thingmenn[i].twitter
+                twitter: thingmenn[i].twitter,
+                createdAt : new Date()
             });
         };
     }
@@ -37,12 +38,8 @@ Meteor.publish("Voterspub", function(){
 });
 
 Meteor.publish("currentUserData", function() {
-    return Meteor.users.find({}, {
-      fields : {
-        'avatar' : 1
-      }
-    });
-  });
+    return Meteor.users.find({_id: this.userId})
+});
 
 Meteor.methods({
     adminAddPeople:function(name, party, profilepic){
@@ -110,3 +107,11 @@ Meteor.methods({
         );
     }
 })
+
+// For facebook logins
+ServiceConfiguration.configurations.remove({
+    service: 'facebook'
+});
+// The facebook app info resides in a secret file in lib/fb_secret.js
+// It will not be included in the repo
+ServiceConfiguration.configurations.insert(fb);

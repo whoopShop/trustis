@@ -1,4 +1,5 @@
 Rating = React.createClass({
+    mixins: [ReactMeteorData],
     getMeteorData: function() {
         return {
             currentUser: Meteor.user()
@@ -33,10 +34,9 @@ Rating = React.createClass({
     renderRater: function() {
         var inputs = [];
         for (var i = 0; i < 11; i++) {
-            inputs.push({nr: i, pId: this.props.pId})
+            inputs.push({nr: i, pId: this.props.pId, key: this.props.key})
         };
-        console.log(inputs);
-        //if (this.data.currentUser != null) {
+        if (this.data.currentUser) {
             return (
                 <form id={this.props.key} className="add-points" onSubmit={this.addRating} >
                     {inputs.map((i) => {
@@ -47,12 +47,12 @@ Rating = React.createClass({
                 </form>
             )
             
-        //}
-        //else {
-        //    return (
-        //        <p>Sign in to vote</p>
-        //    )
-        //}
+        }
+        else {
+            return (
+                <p>Sign in to vote</p>
+            )
+        }
     },
     render: function() {
         return (
