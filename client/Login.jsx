@@ -1,3 +1,4 @@
+// Create login buttons
 LoginButtons = React.createClass({
   propTypes: {
     align: React.PropTypes.string,

@@ -8,6 +8,7 @@ Meteor.startup(function () {
             Peopledb.insert({
                 name: thingmenn[i].name,
                 totalpoints: 0,
+                avgpoints: 0,
                 totalvoters: 0,
                 profilepic: thingmenn[i].image_url,
                 althing_url: thingmenn[i].althing_url, 
@@ -108,10 +109,20 @@ Meteor.methods({
     }
 })
 
-// For facebook logins
+// Facebook logins
 ServiceConfiguration.configurations.remove({
     service: 'facebook'
 });
 // The facebook app info resides in a secret file in lib/fb_secret.js
 // It will not be included in the repo
 ServiceConfiguration.configurations.insert(fb);
+
+// Add user attributes from facebook to profile
+Accounts.onCreateUser(function(options, user) {
+    if (options.profile) {
+        options.profile.picture = "http://graph.facebook.com/" + user.services.facebook.id + "/picture/?type=large";
+        options.profile.thumbnail = "http://graph.facebook.com/" + user.services.facebook.id + "/picture/?type=square";
+        user.profile = options.profile;
+    }
+    return user;
+});

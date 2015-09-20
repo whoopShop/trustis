@@ -7,46 +7,49 @@ Rating = React.createClass({
             currentUser: Meteor.user()
         }
     },
-    getInitialState: function() {
-        return {};
+    getVote: function() {
+        // Get the users vote for this person
+        var person = Votersdb.find({userVoter:this.data.currentUser._id, peopleId:this.props.pId}).fetch()[0];
+        // set default to No opinion if no vote cast
+        return typeof(person) == "undefined" ? "No opinion" : person.points
+    },
+    componentDidMount: function() {        
+        this.setState({
+          selectedValue: this.getVote(),
+        });
+    },
+    getInitialState: function() {   
+        return {
+            selectedValue: "No opinion"
+        };
     },
     avgPts: function () {
+        // Return averege vote score or
         return (this.props.totalpoints / this.props.totalvoters) || 0
     },
-    addRating: function(e) {
-        e.preventDefault();
-        var val = React.findDOMNode(this.refs.input).value;
-        val += this.props.totalpoints;
-        // Voterdb.update(
-        //     this.data.currentUser,
-        //     { $push: {
-
-        //     }
-        // });
-        // Peopledb.update(
-        //     this.props.pId,
-        //     { $set:{
-        //         totalpoints: val
-        //     }
-        // });
-
-        //ItemsCollection.insert({'content': item});
-        //React.findDOMNode(this.refs.input).value = "";
+    handleChange: function(value){
+        // As soon as radio button is selected, change vote.
+        this.setState({
+          selectedValue: value,
+        });
+        // Change vote on the server side
+        Meteor.call("userUpdatesVote", this.data.currentUser._id, this.props.pId, value);
     },
     renderRater: function() {
-        var inputs = [];
-        for (var i = 0; i < 11; i++) {
-            inputs.push({nr: i, pId: this.props.pId, key: this.props.key})
-        };
+        // Array of ratings
+        var inputs = ["No opinion",1,2,3,4,5,6,7,8,9,10];
+        // Only render radio buttons if logged in
         if (this.data.currentUser) {
             return (
-                <form id={this.props.key} className="add-points" onSubmit={this.addRating} >
-                    {inputs.map((i) => {
-                        return <input type="radio" name={i.pId} value={i.nr}>{i.nr}</input>
-                    })}
-                    
-                    <input type="submit" value="Vote" />
-                </form>
+                <RadioGroup name={this.props.pId} selectedValue={this.state.selectedValue} onChange={this.handleChange}>
+                    {Radio => (
+                        <div>
+                            {inputs.map((i) => {
+                                return <Radio value={i} />
+                            })}
+                        </div>
+                    )}
+                </RadioGroup>
             )
             
         }

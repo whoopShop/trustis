@@ -1,5 +1,3 @@
-Meteor.subscribe("Peoplepub");
-Meteor.subscribe("Voterspub");
 Meteor.subscribe("currentUserData");
 var {  
   Router,
@@ -15,6 +13,7 @@ Routes = React.createClass({
       <Router history={ReactRouter.lib.BrowserHistory.history}>
         <Route component={App}>
           <Route path="/" component={People}/>
+          <Route path="/admin" component={Admin}/>
         </Route>
       </Router>
     );
