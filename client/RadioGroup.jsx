@@ -1,3 +1,6 @@
+
+// Easier rendering of a group of radio buttons.
+// Borrowed from the GitHub repo at https://github.com/chenglou/react-radio-group
 function radio(name, selectedValue, onChange) {
   return React.createClass({
     render: function() {

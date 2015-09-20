@@ -1,3 +1,4 @@
+// Our rendering base.
 App = React.createClass({
   getInitialState: function() {
     return {};

@@ -1,3 +1,4 @@
+// The rating part of a person's profile
 Rating = React.createClass({
     mixins: [ReactMeteorData],
     getMeteorData: function() {
@@ -13,7 +14,8 @@ Rating = React.createClass({
         // set default to No opinion if no vote cast
         return typeof(person) == "undefined" ? "No opinion" : person.points
     },
-    componentDidMount: function() {        
+    componentDidMount: function() {
+        // Fetch user's vote at load
         this.setState({
           selectedValue: this.getVote(),
         });
@@ -44,8 +46,8 @@ Rating = React.createClass({
                 <RadioGroup name={this.props.pId} selectedValue={this.state.selectedValue} onChange={this.handleChange}>
                     {Radio => (
                         <div>
-                            {inputs.map((i) => {
-                                return <Radio value={i} />
+                            {inputs.map((i, i) => {
+                                return <Radio value={i} key={i}/>
                             })}
                         </div>
                     )}
@@ -74,18 +76,20 @@ Rating = React.createClass({
     }
 });
 
-
+// Single Person
 Person = React.createClass({
     render: function() {
         var p = this.props.person;
+        // If no profile pi present, show placeholder
+        var pic = this.props.person.profilepic ? this.props.person.profilepic : "images/placeholder.png";
         return (
             <li className="person">
-                <h1>{p.name}</h1>
+                <a href={p.althing_url}>
+                    <h1>{p.name}</h1>
+                </a>
                 <h2 className="party-name">{p.party}</h2>
                 <div className="person-body">
-                    <a href={p.althing_url}>
-                        <img src={p.profilepic} height="220" alt="Profile picture" className="clearfix" />
-                    </a>
+                    <img src={pic} height="220" alt="Profile picture" className="clearfix" />
                     <br />
                     <Rating totalpoints={p.totalpoints} totalvoters={p.totalvoters} pId={p._id} />
                 </div>
@@ -94,6 +98,7 @@ Person = React.createClass({
     }
 });
 
+// All the people
 People = React.createClass({
     mixins: [ReactMeteorData],
     getMeteorData: function() {
