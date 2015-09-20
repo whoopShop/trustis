@@ -1,48 +1,76 @@
 <head>
-  <title>trust</title>
+  <title>Trust</title>
 </head>
 
-<template name="mybody">
-    <div class="container">
-        <p>Here we can put our navbar</p>
-        {{> loginButtons}}
-        <a href="/">Home</a>
-        <a href="/admin">Admin</a>
-        
-        <!-- Every template is rendered in the following yield -->
-        {{> yield}}
-        
-    </div>
+<template name="navigation">
+    <nav class="navbar navbar-default navbar-static-top navbar-inverse">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Trust</a>
+            </div>
+            {{> loginButtons}}
+            <a href="/">Home</a>
+            <a href="/admin">Admin</a>
+        </div>
+    </nav>    
 </template>
 
-<template name="people">
+<template name="mybody">
+        {{>navigation}}
+        <div class="container">
+            <!-- Every template is rendered in the following yield -->
+            {{> yield}}            
+        </div>
+</template>
+
+<template name="person">
+    <li class="person">
+        <h1>{{name}}</h1>
+        <h2 class="party-name">{{party}}</h2>
+        <div class="person-body">
+            <img src="{{profilepic}}" height="220" alt="profile pic" class="clearfix" />
+            <br>
+            {{>rating}}
+        </div>
+    </li>    
+</template>
+
+<template name="people">        
     <div class="row">
         <div class="col-md-12">
-            <h3>Rate how much you trust</h3>
+            <h1 class="person-heading">How much do you trust these people?</h1>
+
+            <ul class="person-list">
+                {{#each getAllPeople}}
+                    {{>person}}
+                {{/each}}
+            </ul>
+
         </div>
-        
-        {{#each getAllPeople}}
-            <div class="col-md-3 singlePerson">
-                <h3>{{name}}</h3>
-                <h4>{{party}}</h4>
-                <img src="{{profilepic}}" height="220" alt="profile pic" />
-                <br>
-                {{>rating}}
-            </div>
-        {{/each}}
         
     </div>
 </template>
 
 <template name="rating">
     <!--  TODO find a simple way to rate something from 0-10 with a Single click -->
-    Average:   {{avgPoints}}<br>
-    Votes: {{totalvoters}}<br>
+
+    <div class="rating-average">
+        Average: <span>{{avgPoints}}</span> 
+    </div>
+    <div class="rating-votes">
+        Votes: <span>{{totalvoters}}</span>
+    </div>
     {{#if currentUser}}
         <form class="add-points" >
             <input class="range-slider" type="range" min="0" max="10" name="points" value="5">
             <span class="range-number">5</span><br>
-            <button class="btn btn-sm btn-primary mb10">Submit</button> 
+            <button class="btn btn-sm btn-primary">Submit</button> 
         </form>
     {{else}}
         <p>Sign in to vote.</p>
