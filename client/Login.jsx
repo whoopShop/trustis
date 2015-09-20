@@ -6,7 +6,6 @@ LoginButtons = React.createClass({
   getDefaultProps() {
     return { align: 'right' };
   },
-
   componentDidMount() {
     var div = document.getElementById('LoginButtons');
     Blaze.renderWithData(Template.loginButtons, {align: this.props.align}, div);

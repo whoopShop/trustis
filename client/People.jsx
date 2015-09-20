@@ -1,6 +1,8 @@
 Rating = React.createClass({
     mixins: [ReactMeteorData],
     getMeteorData: function() {
+        Meteor.subscribe("Voterspub");
+        Meteor.subscribe("currentUserData");
         return {
             currentUser: Meteor.user()
         }
@@ -57,10 +59,10 @@ Rating = React.createClass({
     render: function() {
         return (
             <div className="rating">
-                <div class="rating-average">
+                <div className="rating-average">
                     Average: <span>{this.avgPts()}</span> 
                 </div>
-                <div class="rating-votes">
+                <div className="rating-votes">
                     Votes: <span>{this.props.totalvoters}</span>
                 </div>    
                 {this.renderRater()}
@@ -92,6 +94,7 @@ Person = React.createClass({
 People = React.createClass({
     mixins: [ReactMeteorData],
     getMeteorData: function() {
+        Meteor.subscribe("Peoplepub");
         return {
             people: Peopledb.find({}, {sort: {name: 1}}).fetch()
         }
