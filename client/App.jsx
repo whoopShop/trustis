@@ -4,12 +4,11 @@ App = React.createClass({
   },
   render: function () {
     return (
-      <div className="container">
+      <div>
         <Header />
-        <div id="content">
-          {this.props.children}
+        <div className="container">
+            {this.props.children}
         </div>
-        
       </div>
     );
   }
