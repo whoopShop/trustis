@@ -51,6 +51,9 @@ Meteor.methods({
             name:name,
             party:party,
             profilepic:profilepic,
+            totalpoints: 0,
+            avgpoints: 0,
+            totalvoters: 0,
             createdAt : new Date()
             
         });
@@ -82,15 +85,12 @@ Meteor.methods({
         
         Peopledb.update(thisId, {$inc:{totalpoints:diff}});
     },
-    userIncVoters:function(thisId){
-        Peopledb.update(thisId, {$inc:{totalvoters:1}});
+    userIncVoters:function(thisId, diff){
+        Peopledb.update(thisId, {$inc:{totalvoters:1, totalpoints:diff}});
     },
-    userCreatesVote:function(votee,thisId, points){
-        Votersdb.insert({
-            userVoter:votee,
-            peopleId:thisId,
-            points:points
-        });
+    userDecVoters: function(thisId, pts){
+        pts *= -1;
+        Peopledb.update(thisId, {$inc:{totalvoters:-1, totalpoints:pts}});
     },
     userUpdatesVote:function(votee,thisId, points){
         // How many points has a user given a person
@@ -106,6 +106,9 @@ Meteor.methods({
             },
             {upsert:true}
         );
+    },
+    personUpdateAvg: function(thisId, points) {
+        Peopledb.update(thisId,{$set: {avgpoints:points}})
     }
 })
 

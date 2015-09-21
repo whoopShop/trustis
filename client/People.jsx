@@ -5,45 +5,68 @@ Rating = React.createClass({
         Meteor.subscribe("Voterspub");
         Meteor.subscribe("currentUserData");
         return {
-            currentUser: Meteor.user()
+            currentUser: Meteor.user(),
+            vote: Votersdb.find({peopleId:this.props.person._id}).fetch()[0]
         }
     },
+    hasVoted: function() {
+        // If vote was found in the db return true
+        return typeof(this.data.vote) !== "undefined"
+    },
     getVote: function() {
-        // Get the users vote for this person
-        var person = Votersdb.find({userVoter:this.data.currentUser._id, peopleId:this.props.pId}).fetch()[0];
-        // set default to No opinion if no vote cast
-        return typeof(person) == "undefined" ? "No opinion" : person.points
+        // Set default to No opinion if no vote cast
+        return this.hasVoted() ? this.data.vote.points : 0
     },
     componentDidMount: function() {
         // Fetch user's vote at load
         this.setState({
-          selectedValue: this.getVote(),
+          selectedValue: this.getVote()
         });
     },
     getInitialState: function() {   
         return {
-            selectedValue: "No opinion"
+            selectedValue: 0
         };
     },
     avgPts: function () {
         // Return averege vote score or
-        return (this.props.totalpoints / this.props.totalvoters) || 0
+        var avg = (this.props.person.totalpoints / this.props.person.totalvoters);
+        return isFinite(avg) && !isNaN(avg) ? avg : 0;
     },
     handleChange: function(value){
-        // As soon as radio button is selected, change vote.
+        if (this.hasVoted()) {
+            // User changes vote from nothing to something
+            if (this.data.vote.points == 0 && value > 0){
+                Meteor.call("userIncVoters", this.props.person._id, value);
+            }
+            // User changes his vote to nothing
+            else if (value == 0 && this.data.vote.points > 0) {
+                Meteor.call("userDecVoters", this.props.person._id, this.data.vote.points);
+            }
+            // User changes his vote
+            else {
+                Meteor.call("userAddPoints", this.props.person._id, (value - this.data.vote.points));
+            }
+        } 
+        else {
+            // User votes for the first time
+            Meteor.call("userIncVoters", this.props.person._id, value);
+        }        
+        // As soon as radio button is selected, selectedValue.
         this.setState({
-          selectedValue: value,
+          selectedValue: value
         });
         // Change vote on the server side
-        Meteor.call("userUpdatesVote", this.data.currentUser._id, this.props.pId, value);
+        Meteor.call("userUpdatesVote", this.data.currentUser._id, this.props.person._id, value);
+        Meteor.call("personUpdateAvg", this.props.person._id, this.avgPts());
     },
     renderRater: function() {
         // Array of ratings
-        var inputs = ["No opinion",1,2,3,4,5,6,7,8,9,10];
+        var inputs = [0,1,2,3,4,5,6,7,8,9,10];
         // Only render radio buttons if logged in
         if (this.data.currentUser) {
             return (
-                <RadioGroup name={this.props.pId} selectedValue={this.state.selectedValue} onChange={this.handleChange}>
+                <RadioGroup name={this.props.person._id} selectedValue={this.state.selectedValue} onChange={this.handleChange}>
                     {Radio => (
                         <div>
                             {inputs.map((i, i) => {
@@ -68,7 +91,7 @@ Rating = React.createClass({
                     Average: <span>{this.avgPts()}</span> 
                 </div>
                 <div className="rating-votes">
-                    Votes: <span>{this.props.totalvoters}</span>
+                    Votes: <span>{this.props.person.totalvoters}</span>
                 </div>    
                 {this.renderRater()}
             </div>
@@ -80,7 +103,7 @@ Rating = React.createClass({
 Person = React.createClass({
     render: function() {
         var p = this.props.person;
-        // If no profile pi present, show placeholder
+        // If no profile pi present, show placeholder image
         var pic = this.props.person.profilepic ? this.props.person.profilepic : "images/placeholder.png";
         return (
             <li className="person">
@@ -91,7 +114,7 @@ Person = React.createClass({
                 <div className="person-body">
                     <img src={pic} height="220" alt="Profile picture" className="clearfix" />
                     <br />
-                    <Rating totalpoints={p.totalpoints} totalvoters={p.totalvoters} pId={p._id} />
+                    <Rating person={p} />
                 </div>
             </li>
         );
