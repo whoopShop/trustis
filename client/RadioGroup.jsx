@@ -5,12 +5,15 @@ function radio(name, selectedValue, onChange) {
   return React.createClass({
     render: function() {
       return (
-        <input
-          {...this.props}
-          type="radio"
-          name={name}
-          checked={this.props.value === selectedValue}
-          onChange={onChange.bind(null, this.props.value)} />
+        <label>
+          <input
+            {...this.props}
+            type="radio"
+            name={name}
+            checked={this.props.value === selectedValue}
+            onChange={onChange.bind(null, this.props.value)} />
+        {this.props.value !== 0 ? this.props.value : "No opinion"}
+        </label>
       );
     }
   });

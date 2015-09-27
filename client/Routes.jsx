@@ -14,6 +14,10 @@ Routes = React.createClass({
         <Route component={App}>
           <Route path="/" component={People}/>
           <Route path="/admin" component={Admin}/>
+          <Route path="/admin/people" component={AllPeopleTable}/>
+          <Route path="/admin/person/:pId" component={EditPerson}/>
+          <Route path="/admin/users" component={AllUsers}/>
+          <Route path="/admin/user/:uId" component={EditUser}/>
         </Route>
       </Router>
     );
