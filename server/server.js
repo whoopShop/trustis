@@ -40,12 +40,7 @@ Meteor.publish("Peoplepub", function(){
 
 Meteor.publish("Voterspub", function(){
     // Only a logged in user can see and only see his own votes
-    if (!Meteor.userId()) {
-        return Votersdb.find({userVoter:this.userId});
-    }
-    else {
-        return []
-    }
+    return Votersdb.find({userVoter:this.userId});
 });
 
 Meteor.publish("currentUserData", function() {
@@ -103,13 +98,11 @@ Meteor.methods({
             Peopledb.remove(thisId);
         }
         else {
-            throw new Meteor.Error(403, "Not authorized to create new people");
+            throw new Meteor.Error(403, "Not authorized to delete people");
         }
     },
     
     userAddPoints:function(thisId, diff){
-        // TODO check if logged in
-        
         Peopledb.update(thisId, {$inc:{totalpoints:diff}});
     },
     userIncVoters:function(thisId, diff){
