@@ -1,120 +1,208 @@
-FormTextInput = React.createClass({
+/*
+ * PersonForm
+ */
+PersonForm = React.createClass({
   render: function() {
+    var p = this.props.person;
+    var nameVal = this.props.add ? "" : p.name;
+    var partyVal = this.props.add ? "" : p.party;
+    var picVal = this.props.add ? "" : p.profilepic;
     return (
-      <div className="form-group">
-          <label htmlFor={this.props.name}>{this.props.label}</label>
-          <input className="form-control" type="text" name={this.props.name} defaultValue={this.props.value} />
-      </div>
+      <El.Form>
+        <El.FormField label="Name" htmlFor="basic-form-input">
+          <El.FormInput placeholder={p.name} name="basic-form-input" defaultValue={nameVal} ref="name"/>
+        </El.FormField>
+        <El.FormField label="Party" htmlFor="basic-form-input">
+          <El.FormInput placeholder={p.party} name="basic-form-input" defaultValue={partyVal} ref="party"/>
+        </El.FormField>
+        <El.FormField label="Profile Picture" htmlFor="basic-form-input">
+          <El.FormInput placeholder={p.profilepic} name="basic-form-input" defaultValue={picVal} ref="pic"/>
+        </El.FormField>
+        <El.Button type="primary" onClick={this.onclick}>Save</El.Button>
+        <El.Button onClick={this.props.close}>Cancel</El.Button>
+      </El.Form>
     );
+  },
+  onclick() {
+    var p = {
+      name: React.findDOMNode(this.refs.name).value,
+      party: React.findDOMNode(this.refs.party).value,
+      pic: React.findDOMNode(this.refs.pic).value
+    };
+    this.props.onclick(p);
   }
 });
 
+/*
+ * EditPerson
+ */
 EditPerson = React.createClass({
-  mixins: [ReactMeteorData],
-  getMeteorData: function() {
-      Meteor.subscribe("Peoplepub");
-      return {
-          person: Peopledb.find({_id: this.props.params.pId}).fetch()[0]
-      }
+  update(p) {
+    Meteor.call("adminEditPeople", this.props.person._id, p.name, p.party, p.pic);
+    this.props.close();
   },
-  getInitialState: function() {
-      return {
-        person: []
-      };
-  },
-  componentDidMount: function() {
-    console.log(this.data.person);
-    this.setState({
-      person: this.data.person
-    });
-  },
-  render: function() {
-    var p = typeof(this.state.person) !== "undefined" ? this.state.person : {name: "", party: "", profilepic: ""};
-    console.log(p);
+  render() {
     return (
-      <div className="editperson">
-        <h3>Edit</h3>
-        <form className="edit-people" action="index.html" method="post">
-          <FormTextInput name="name" label="Name" value={p.name} />
-          <FormTextInput name="party" label="Party" value={p.party} />
-          <FormTextInput name="profilepic" label="Profile Picture" value={p.profilepic} />  
-          <button type="submit" className="btn btn-primary" name="button">Save edit</button>
-        </form>
-      </div>
-    );
+      <PersonForm person={this.props.person} onclick={this.update} close={this.props.close} add={false} />
+      )
   }
 });
 
+/*
+ * AddPerson
+ */
 AddPerson = React.createClass({
-  render: function() {
+  add(p) {
+    Meteor.call("adminAddPeople", p.name, p.party, p.pic);
+    this.props.close();
+  },
+  render() {
+    var p = {
+      name: "Name",
+      party: "Party",
+      profilepic: "Url to profile picture"
+    };
     return (
-      <div className="addperson col-md-4">
-        <h3>Add a new person</h3>
-        <form className="add-people" method="post">
-          <FormTextInput name="name" label="Name" value="" />
-          <FormTextInput name="party" label="Party" value="" />
-          <FormTextInput name="profilepic" label="Profile Picture" value="" />
-          <button type="submit" className="btn btn-primary" name="button">Add</button>
-        </form>
-      </div>
+      <PersonForm person={p} onclick={this.add} close={this.props.close} add={true} />
     );
   }
 });
 
+/*
+ * PersonRow
+ */
 PersonRow = React.createClass({
-  render: function() {
+  getInitialState(){
+    return {};
+  },
+  render() {
     return (
       <tr>
         <td>
-            <a href={"/admin/person/" + this.props.person._id}>Edit</a>
-            <a href="#" className="delete-people">Delete</a>
+          <El.ButtonGroup>
+            <El.Button type="primary" onClick={this.update}>Edit</El.Button>
+            <El.Button type="danger" onClick={this.deletePerson}>Delete</El.Button>
+          </ El.ButtonGroup>
         </td>
         <td>{this.props.person.name}</td>
         <td>{this.props.person.party}</td>
         <td>{this.props.person.profilepic}</td>
       </tr>
     );
+  },
+  update() {
+    this.props.onUpdate(this.props.person);
+  },
+  deletePerson() {
+    this.props.onDelete(this.props.person);
   }
+
 });
 
+/*
+ * AllPeopleTable
+ */
 AllPeopleTable = React.createClass({
   mixins: [ReactMeteorData],
-  getMeteorData: function() {
+  getMeteorData() {
       Meteor.subscribe("Peoplepub");
       return {
           people: Peopledb.find({}, {sort: {name: 1}}).fetch()
       }
   },
-  getInitialState: function() {
-      return {};
+  getInitialState() {
+      return ({
+        editing: [],
+        showModal: false,
+        addEditDelete: "Edit"
+      });
   },
-  render: function() {
+  deletePerson() {
+    Meteor.call("adminDeletePeople", this.state.editing._id);
+    this.close();
+  },
+  addOrEditOrDelete(){
+    if (this.state.addEditDelete == "Edit"){
+      return <EditPerson person={this.state.editing} close={this.close} />
+    }
+    else if (this.state.addEditDelete == "Delete"){
+      return (
+        <div>
+          <h2>Delete {this.state.editing.name}? </h2>
+          <El.Button type="danger" onClick={this.deletePerson}>Delete</El.Button>
+          <El.Button onClick={this.close}>Cancel</El.Button>
+        </div>
+        )
+    }
+    else {
+      return <AddPerson close={this.close} />
+    }
+  },
+  render() {
     return (
       <div className="allpeopletable">
-        <AddPerson />
-        <h3>See all</h3>
-        <table className="table table-bordered table-condensed">
-            <thead>
-                <tr>
-                    <th>Edit</th>
-                    <th>Name</th>
-                    <th>Party</th>
-                    <th>Pic Url</th>
-                </tr>
-            </thead>
-            <tbody>
-                {this.data.people.map((p) => {
-                  return <PersonRow person={p} key={p._id} />
-                })}
-            </tbody>
-        </table>
+        <El.Button type="primary" onClick={this.onAdd}>Add Person</El.Button>
+        <El.Table>
+          <colgroup>
+            <col width="160px" />
+            <col width="" />
+            <col width="" />
+            <col width="" />
+          </colgroup>
+          <thead>
+              <tr>
+                  <th>Edit</th>
+                  <th>Name</th>
+                  <th>Party</th>
+                  <th>Pic Url</th>
+              </tr>
+          </thead>
+          <tbody>
+              {this.data.people.map((p) => {
+                return <PersonRow person={p} key={p._id} onUpdate={this.onUpdate} onDelete={this.onDelete} />
+              })}
+          </tbody>
+        </El.Table>
+        <El.Modal
+          isOpen={this.state.showModal}
+          onHide={this.close}
+          backdropClosesModal>
+          <El.ModalHeader text={this.state.addEditDelete} showCloseButton onClose={this.close} />
+          <El.ModalBody>
+            {this.addOrEditOrDelete()}
+          </El.ModalBody>
+        </ El.Modal>
       </div>
     );
+  },
+  close() {
+    this.setState({ showModal: false });
+  },
+  onAdd() {
+    this.setState({
+      addEditDelete: "Add",
+      showModal: true
+    });
+  },
+  onUpdate(person) {
+    this.setState({
+      editing: person,
+      addEditDelete: "Edit",
+      showModal: true
+    });
+  },
+  onDelete(person) {
+    this.setState({
+      editing: person,
+      addEditDelete: "Delete",
+      showModal: true
+    });
   }
 });
 
+
 EditUser = React.createClass({
-  render: function() {
+  render() {
     return (
       <div className="EditUser"></div>
     );
@@ -122,7 +210,7 @@ EditUser = React.createClass({
 });
 
 AllUsers = React.createClass({
-  render: function() {
+  render() {
     return (
       <div className="Users"></div>
     );
@@ -130,17 +218,10 @@ AllUsers = React.createClass({
 });
 
 Admin = React.createClass({
-  mixins: [ReactMeteorData],
-  getMeteorData: function() {
-      Meteor.subscribe("Peoplepub");
-      return {
-          people: Peopledb.find({}, {sort: {name: 1}}).fetch()
-      }
-  },
-  getInitialState: function() {
+  getInitialState() {
       return {};
   },
-  renderProfile: function() {
+  renderProfile() {
     if (typeof(this.data.currentUser) !== "undefined") {
       return (
         <div className="userProfile">
@@ -155,11 +236,9 @@ Admin = React.createClass({
       )
     }
   },
-  render: function() {
+  render() {
     return (
-      <div className="row">
-        {this.renderProfile()}
-      </div>
+      <AllPeopleTable />
     );
   }
 });
