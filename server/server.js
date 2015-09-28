@@ -2,6 +2,11 @@
 Meteor.startup(function () {
     // code to run on server at startup
 
+    // id = Accounts.createUser({
+    //   email: "admin@whoopshop.com",
+    //   password: "2z0rVxpDl1DnRjRy"
+    // });
+    // Roles.addUsersToRoles(id, 'admin');
     // If the number of thingmenn in the DB is less than in the thingmenn object, loop through them and import into db
     if (Peopledb.find().count() == 0) {
         for (var i = thingmenn.length - 1; i >= 0; i--) {
@@ -35,49 +40,71 @@ Meteor.publish("Peoplepub", function(){
 
 Meteor.publish("Voterspub", function(){
     // Only a logged in user can see and only see his own votes
-    return Votersdb.find({userVoter:this.userId});
+    if (!Meteor.userId()) {
+        return Votersdb.find({userVoter:this.userId});
+    }
+    else {
+        return []
+    }
 });
 
 Meteor.publish("currentUserData", function() {
     return Meteor.users.find({_id: this.userId})
 });
+Meteor.publish("AllUsers", function() {
+    var loggedInUser = Meteor.user();
+    if (Roles.userIsInRole(loggedInUser, ['admin'])) {
+        return Meteor.users.find();
+    }
+    else {
+        return []
+    }
+});
 
 Meteor.methods({
     adminAddPeople:function(name, party, profilepic){
-        
-        // TODO Check if user is ADMIN (and logged in)?
-        
-        Peopledb.insert({
-            name:name,
-            party:party,
-            profilepic:profilepic,
-            totalpoints: 0,
-            avgpoints: 0,
-            totalvoters: 0,
-            createdAt : new Date()
-            
-        });
+        var loggedInUser = Meteor.user();
+        if (Roles.userIsInRole(loggedInUser, ['admin'])) {
+            Peopledb.insert({
+                name:name,
+                party:party,
+                profilepic:profilepic,
+                totalpoints: 0,
+                avgpoints: 0,
+                totalvoters: 0,
+                createdAt : new Date()   
+            });
+        }
+        else {
+            throw new Meteor.Error(403, "Not authorized to create new people");
+        }
     },
     
     adminEditPeople:function(thisId, name, party, profilepic){
-        
-        // TODO Check if user is ADMIN (and logged in)?
-        
-        Peopledb.update(
-            thisId,
-            { $set:{
-                name:name,
-                party:party,
-                profilepic:profilepic
-            }
-        });
+        var loggedInUser = Meteor.user();
+        if (Roles.userIsInRole(loggedInUser, ['admin'])) {
+            Peopledb.update(
+                thisId,
+                { $set:{
+                    name:name,
+                    party:party,
+                    profilepic:profilepic
+                }
+            });
+        }
+        else {
+            throw new Meteor.Error(403, "Not authorized to edit people");
+        }
     },
     
     adminDeletePeople:function(thisId){
-        
-        // TODO Check if user is ADMIN (and logged in)?
-        
-        Peopledb.remove(thisId);
+        var loggedInUser = Meteor.user();
+        if (Roles.userIsInRole(loggedInUser, ['admin'])) {
+            Peopledb.remove(thisId);
+        }
+        else {
+            throw new Meteor.Error(403, "Not authorized to create new people");
+        }
     },
     
     userAddPoints:function(thisId, diff){

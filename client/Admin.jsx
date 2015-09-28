@@ -210,6 +210,13 @@ EditUser = React.createClass({
 });
 
 AllUsers = React.createClass({
+  // mixins: [ReactMeteorData],
+  // getMeteorData() {
+  //     Meteor.subscribe("Peoplepub");
+  //     return {
+  //         users: Peopledb.find({}, {sort: {name: 1}}).fetch()
+  //     }
+  // },
   render() {
     return (
       <div className="Users"></div>
