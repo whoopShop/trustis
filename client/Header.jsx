@@ -1,9 +1,14 @@
 Header = React.createClass({
     mixins: [ReactMeteorData],
-    getMeteorData: function() {
+    getMeteorData() {
         Meteor.subscribe("currentUserData");
         return {
           currentUser: Meteor.user() 
+        }
+    },
+    showAdmin() {
+        if (Roles.userIsInRole(this.data.currentUser,'admin')) {
+            return <a href="/admin">Admin</a>
         }
     },
     render() {
@@ -21,7 +26,7 @@ Header = React.createClass({
                     </div>
                     <LoginButtons />
                     <a href="/">Home</a>
-                    <a href="/admin">Admin</a>
+                    {this.showAdmin()}
                 </div>
             </nav>
         );

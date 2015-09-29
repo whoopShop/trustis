@@ -1,2 +1,3 @@
 lib/fb_secret.js
+lib/admin.js
 *.cached

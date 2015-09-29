@@ -1,11 +1,15 @@
 
 Meteor.startup(function () {
     // code to run on server at startup
-
-    // id = Accounts.createUser({
-    //   email: "admin@whoopshop.com",
-    //   password: "2z0rVxpDl1DnRjRy"
-    // });
+    if (Meteor.users.find({ "emails.address" : 'admin@whoopshop.com' }).fetch().length > 0) {
+        console.log(Meteor.users.find({ "emails.address" : 'admin@whoopshop.com' }).fetch());
+    }
+    else {
+        id = Accounts.createUser(admin);
+        Roles.addUsersToRoles(id, 'admin');
+        console.log("Admin user " + admin.email + " added. Pw: " + admin.password);
+    }
+    // id = Accounts.createUser(admin});
     // Roles.addUsersToRoles(id, 'admin');
     // If the number of thingmenn in the DB is less than in the thingmenn object, loop through them and import into db
     if (Peopledb.find().count() == 0) {

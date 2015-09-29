@@ -5,19 +5,32 @@ var {
 } = ReactRouter;
 
 Routes = React.createClass({  
-  getInitialState: function() {
+  mixins: [ReactMeteorData],
+  getMeteorData() {
+      Meteor.subscribe("currentUserData");
+      return {
+        currentUser: Meteor.user() 
+      }
+  },
+  getInitialState() {
     return {};
   },
-  render: function () {
+  adminRoutes() {
+      if (Roles.userIsInRole(this.data.currentUser,'admin')) {
+          return (
+            <Route path="/admin" component={Admin}>
+              <Route path="/people" component={AllPeopleTable}/>
+              <Route path="/users" component={AllUsers}/>
+            </Route>
+          );
+      }
+  },
+  render() {
     return (
       <Router history={ReactRouter.lib.BrowserHistory.history}>
         <Route component={App}>
           <Route path="/" component={People}/>
-          <Route path="/admin" component={Admin}/>
-          <Route path="/admin/people" component={AllPeopleTable}/>
-          <Route path="/admin/person/:pId" component={EditPerson}/>
-          <Route path="/admin/users" component={AllUsers}/>
-          <Route path="/admin/user/:uId" component={EditUser}/>
+          {this.adminRoutes()}
         </Route>
       </Router>
     );
