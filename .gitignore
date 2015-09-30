@@ -2,4 +2,3 @@ lib/fb_secret.js
 lib/admin.js
 *.cached
 npm-debug.log
-packages/
