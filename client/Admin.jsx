@@ -127,7 +127,7 @@ AllPeopleTable = React.createClass({
     // Gather people data from server
     Meteor.subscribe("Peoplepub");
     return {
-      people: Peopledb.find({}, {sort: {name: 1}}).fetch()
+      people: Peopledb.find({}).fetch().sort(dynamicSort("name"))
     }
   },
   getInitialState() {
@@ -187,22 +187,13 @@ AllPeopleTable = React.createClass({
           </thead>
           <tbody>
               {this.data.people.map((p) => {
-                return <PersonRow
-                          person={p}
-                          key={p._id}
-                          onUpdate={this.onUpdate}
-                          onDelete={this.onDelete} />
+                return <PersonRow person={p} key={p._id}
+                        onUpdate={this.onUpdate} onDelete={this.onDelete} />
               })}
           </tbody>
         </El.Table>
-        <El.Modal
-          isOpen={this.state.showModal}
-          onHide={this.close}
-          backdropClosesModal>
-          <El.ModalHeader
-            text={this.state.addEditDelete}
-            showCloseButton
-            onClose={this.close} />
+        <El.Modal isOpen={this.state.showModal} onHide={this.close}>
+          <El.ModalHeader text={this.state.addEditDelete} showCloseButton onClose={this.close} />
           <El.ModalBody>
             {this.addOrEditOrDelete()}
           </El.ModalBody>

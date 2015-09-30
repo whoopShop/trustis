@@ -104,7 +104,7 @@ Person = React.createClass({
     render: function() {
         var p = this.props.person;
         // If no profile pi present, show placeholder image
-        var pic = this.props.person.profilepic ? this.props.person.profilepic : "images/placeholder.png";
+        var pic = this.props.person.profilepic ? this.props.person.profilepic : "images/p.png";
         return (
             <li className="person">
                 <a href={p.althing_url}>
@@ -127,7 +127,7 @@ People = React.createClass({
     getMeteorData: function() {
         Meteor.subscribe("Peoplepub");
         return {
-            people: Peopledb.find({}, {sort: {name: 1}}).fetch()
+            people: Peopledb.find({}, {sort: {name: 1}}).fetch().sort(dynamicSort("name"))
         }
     },
     getInitialState: function() {
